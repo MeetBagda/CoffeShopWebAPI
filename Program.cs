@@ -1,4 +1,6 @@
+// CoffeeShopWebAPI/Program.cs
 using CoffeeShopWebAPI.Data;
+using CoffeeShopWebAPI.Middleware;  // Import the namespace
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +20,11 @@ builder.Services.AddScoped<BillRepository>();         // Add BillRepository
 builder.Services.AddScoped<OrderDetailsRepository>();  // Add OrderDetailsRepository
 builder.Services.AddSwaggerGen();
 
+// Add logging
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -30,6 +37,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+// Register the middleware
+app.UseMiddleware<RequestLoggingMiddleware>();
 
 app.MapControllers();
 
